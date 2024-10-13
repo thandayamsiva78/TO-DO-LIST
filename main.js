@@ -56,6 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         buildContainer(taskTitle, taskDate, taskTime, taskDescription, taskCategory, taskPriority);
         callpoppupNotification();
+        checkDeadline(taskData);
 
         this.reset();
     });
@@ -232,6 +233,11 @@ document.addEventListener("DOMContentLoaded", function () {
         const currentDate = new Date();
         const taskDateTime = new Date(`${taskData.date} ${taskData.time}`);
 
+        if (taskDateTime < currentDate) {
+            alert("Please select a future date.");
+            return;
+        }
+
         const timeDifference = taskDateTime - currentDate;
         const oneHourInMilliseconds = 60 * 60 * 1000;
 
@@ -239,7 +245,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const taskContainers = document.querySelectorAll(".divContainer");
             taskContainers.forEach(container => {
                 if (container.querySelector("h1").innerText === taskData.title) {
-                    container.style.backgroundColor = "red"; 
+                    container.style.backgroundColor = "#CE1D1DAE"; 
                     container.style.color = "white"; 
                 }
             });
@@ -247,7 +253,5 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     loadTasks();
-
-
 
 });
