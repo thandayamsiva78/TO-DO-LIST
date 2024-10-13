@@ -1,9 +1,24 @@
 document.addEventListener("DOMContentLoaded", function () {
     const hoursSelected = document.getElementById("hour");
     const minutesSelected = document.getElementById("minute");
+    const taskForm = document.getElementById("task-form");
+    const taskDateInput = document.getElementById("date");
 
     hoursSelected.addEventListener("focus", populateHours);
     minutesSelected.addEventListener("focus", populateMinutes);
+
+    taskDateInput.addEventListener("change", function () {
+        const selectedDate = new Date(this.value);
+        const currentDate = new Date();
+        
+        // Reset time to compare date only
+        currentDate.setHours(0, 0, 0, 0);
+        
+        if (selectedDate < currentDate) {
+            alert("Please select a future date.");
+            this.value = ""; // Optional: Clear the input field
+        }
+    });
 
     function populateHours() {
         hoursSelected.innerHTML = "";
@@ -25,7 +40,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    const taskForm = document.getElementById("task-form");
 
     taskForm.addEventListener("submit", function (e) {
         e.preventDefault();
@@ -51,9 +65,8 @@ document.addEventListener("DOMContentLoaded", function () {
             priority: taskPriority
         };
 
-        // Save task to localStorage
+        checkDeadline(taskData);
         saveTaskToLocalStorage(taskData);
-
         buildContainer(taskTitle, taskDate, taskTime, taskDescription, taskCategory, taskPriority);
         callpoppupNotification();
         checkDeadline(taskData);
@@ -232,11 +245,6 @@ document.addEventListener("DOMContentLoaded", function () {
     function checkDeadline(taskData) {
         const currentDate = new Date();
         const taskDateTime = new Date(`${taskData.date} ${taskData.time}`);
-
-        if (taskDateTime < currentDate) {
-            alert("Please select a future date.");
-            return;
-        }
 
         const timeDifference = taskDateTime - currentDate;
         const oneHourInMilliseconds = 60 * 60 * 1000;
